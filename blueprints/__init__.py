@@ -43,9 +43,12 @@ def add_claims_to_access_token(identity):
 
 from blueprints.auth import bp_auth
 from blueprints.pemain.resources import bp_pemain
+from blueprints.pebisnis.resources import bp_pebisnis
 from blueprints.bookingrequest.resources import bp_bookingrequest
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
 app.register_blueprint(bp_pemain, url_prefix='/api/pemain')
 app.register_blueprint(bp_bookingrequest, url_prefix='/api/booking')
+app.register_blueprint(bp_pebisnis, url_prefix='/api/pebisnis')
+
 db.create_all()
