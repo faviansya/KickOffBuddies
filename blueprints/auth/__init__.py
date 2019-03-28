@@ -10,9 +10,8 @@ api = Api(bp_auth)
 class CreateTokenResources(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', location='args', required=True)
-        parser.add_argument('password', location = 'args', required = True)
-        parser.add_argument('admin', location = 'args')
+        parser.add_argument('username', location='json', required=True)
+        parser.add_argument('password', location = 'json', required = True)
         args = parser.parse_args()
 
         qry = Pemain.query.filter_by(username = args['username']).filter_by(password = args['password']).first()
