@@ -59,11 +59,21 @@ class PemainResources(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('password', location = 'json',default = marshal_pemain["password"])
         parser.add_argument('name', location = 'json',default = marshal_pemain["name"])
+        parser.add_argument('email', location = 'json',default = marshal_pemain["email"])
+        parser.add_argument('phone_no', location = 'json',default = marshal_pemain["phone_no"])
+        parser.add_argument('address', location = 'json',default = marshal_pemain["address"])
+        parser.add_argument('favourite_sport', location = 'json',default = marshal_pemain["favourite_sport"])
+
         args = parser.parse_args()
 
 
         qry.password = args['password']
         qry.name = args['name']
+        qry.email = args['email']
+        qry.phone_no = args['phone_no']
+        qry.address = args['address']
+        qry.favourite_sport = args['favourite_sport']
+
         db.session.commit()
         marshal_pemain = marshal(qry, Pemain.response_field)
 
@@ -74,9 +84,13 @@ class PemainResources(Resource):
         parser.add_argument('username', location = 'json', required = True)
         parser.add_argument('password', location = 'json', required = True)
         parser.add_argument('name', location = 'json', required = True)
+        parser.add_argument('email', location = 'json', required = True)
+        parser.add_argument('phone_no', location = 'json')
+        parser.add_argument('address', location = 'json', required = True)
+        parser.add_argument('favourite_sport', location = 'json', required = True)
         args = parser.parse_args()
 
-        pemain = Pemain(args['username'], args['password'],args['name'],"pemain",str(datetime.datetime.now()))
+        pemain = Pemain(args['username'], args['password'],args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()))
         db.session.add(pemain)
         db.session.commit()
 
