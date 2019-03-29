@@ -45,14 +45,14 @@ from blueprints.auth import bp_auth
 from blueprints.pemain.resources import bp_pemain
 from blueprints.pebisnis.resources import bp_pebisnis
 from blueprints.bookingrequest.resources import bp_bookingrequest
-from blueprints.basket.resources import bp_basket
+from blueprints.player_list.resources import bp_playerlist
 from blueprints.polling.resources import bp_polling
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
 app.register_blueprint(bp_pemain, url_prefix='/api/pemain')
 app.register_blueprint(bp_bookingrequest, url_prefix='/api/booking')
 app.register_blueprint(bp_pebisnis, url_prefix='/api/pebisnis')
-app.register_blueprint(bp_basket, url_prefix='/api/basket')
+app.register_blueprint(bp_playerlist, url_prefix='/api/playerlist')
 app.register_blueprint(bp_polling, url_prefix='/api/polling')
 
 db.create_all()
