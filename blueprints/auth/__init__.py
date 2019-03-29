@@ -1,4 +1,4 @@
-import logging, json
+import logging, json, hashlib
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt_claims
@@ -14,8 +14,9 @@ class CreateTokenResources(Resource):
         parser.add_argument('username', location='json', required=True)
         parser.add_argument('password', location = 'json', required = True)
         args = parser.parse_args()
+        password = hashlib.md5(args['password'].encode()).hexdigest()
 
-        qry = Pemain.query.filter_by(username = args['username']).filter_by(password = args['password']).first()
+        qry = Pemain.query.filter_by(username = args['username']).filter_by(password = password).first()
         if qry is not None:
             token = create_access_token(marshal(qry, Pemain.response_field))
         else:
@@ -30,8 +31,9 @@ class CreateTokenResourcesPebisnis(Resource):
         parser.add_argument('username', location='json', required=True)
         parser.add_argument('password', location = 'json', required = True)
         args = parser.parse_args()
+        password = hashlib.md5(args['password'].encode()).hexdigest()
 
-        qry = Pebisnis.query.filter_by(username = args['username']).filter_by(password = args['password']).first()
+        qry = Pebisnis.query.filter_by(username = args['username']).filter_by(password = password).first()
         if qry is not None:
             token = create_access_token(marshal(qry, Pemain.response_field))
         else:

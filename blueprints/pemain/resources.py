@@ -1,4 +1,4 @@
-import json, logging
+import json, logging, hashlib
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from flask_jwt_extended import jwt_required, get_jwt_claims
@@ -66,8 +66,9 @@ class PemainResources(Resource):
 
         args = parser.parse_args()
 
+        password = hashlib.md5(args['password'].encode()).hexdigest()
 
-        qry.password = args['password']
+        qry.password = password
         qry.name = args['name']
         qry.email = args['email']
         qry.phone_no = args['phone_no']
@@ -89,8 +90,9 @@ class PemainResources(Resource):
         parser.add_argument('address', location = 'json', required = True)
         parser.add_argument('favourite_sport', location = 'json', required = True)
         args = parser.parse_args()
+        password = hashlib.md5(args['password'].encode()).hexdigest()
 
-        pemain = Pemain(args['username'], args['password'],args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()))
+        pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()))
         db.session.add(pemain)
         db.session.commit()
 
