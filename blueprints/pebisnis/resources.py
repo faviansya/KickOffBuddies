@@ -1,4 +1,4 @@
-import logging, json
+import logging, json, hashlib
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from . import *
@@ -33,7 +33,8 @@ class PebisnisResource(Resource):
         parser.add_argument('deskripsi', location='json')
         args = parser.parse_args() 
         user_type = 'pebisnis'
-        user_new = Pebisnis('pebisnis', args['username'], args['password'], args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()))
+        password = hashlib.md5(args['password'].encode()).hexdigest()
+        user_new = Pebisnis('pebisnis', args['username'], password, args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()))
         db.session.add(user_new) #insert the input data into the database
         db.session.commit() 
         return {"code": 200, "message": "OK, your user profile has been created", "data":marshal(user_new, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
@@ -50,6 +51,7 @@ class PebisnisResource(Resource):
         parser.add_argument('address', location='json')
         parser.add_argument('deskripsi', location='json')
         args = parser.parse_args()
+        password = hashlib.md5(args['password'].encode()).hexdigest()
         id = get_jwt_claims()['id']
         qry_user = Pebisnis.query.get(id)
         if qry_user is not None and get_jwt_claims()['id'] == id:
@@ -58,7 +60,7 @@ class PebisnisResource(Resource):
             if args['nama_tempat'] is not None:
                 qry_user.nama_tempat = args['nama_tempat']
             if args['password'] is not None:
-                qry_user.password = args['password']
+                qry_user.password = password
             if args['name'] is not None:
                 qry_user.name = args['name']
             if args['email'] is not None:
