@@ -4,6 +4,7 @@ from flask_restful import Api, Resource, reqparse, marshal
 from . import *
 from blueprints import db
 from flask_jwt_extended import jwt_required, get_jwt_claims
+import datetime
 
 bp_pebisnis = Blueprint('pebisnis', __name__)
 api = Api(bp_pebisnis)
@@ -32,7 +33,7 @@ class PebisnisResource(Resource):
         parser.add_argument('deskripsi', location='json')
         args = parser.parse_args() 
         user_type = 'pebisnis'
-        user_new = Pebisnis('pebisnis', args['username'], args['nama_tempat'], args['lapangan'], args['password'], args['name'], args['email'], args['phone_no'], args['address'], args['deskripsi'])
+        user_new = Pebisnis('pebisnis', args['username'], args['password'], args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()))
         db.session.add(user_new) #insert the input data into the database
         db.session.commit() 
         return {"code": 200, "message": "OK, your user profile has been created", "data":marshal(user_new, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
@@ -40,10 +41,10 @@ class PebisnisResource(Resource):
     @jwt_required 
     def put(self, id=None):
         parser = reqparse.RequestParser()
-        parser.add_argument('nama_tempat', location='json')
-        parser.add_argument('lapangan', location='json')
         parser.add_argument('password', location='json')
         parser.add_argument('name', location='json')
+        parser.add_argument('nama_tempat', location='json')
+        parser.add_argument('lapangan', location='json')
         parser.add_argument('email', location='json')
         parser.add_argument('phone_no', location='json')
         parser.add_argument('address', location='json')
@@ -78,7 +79,7 @@ class PebisnisResource(Resource):
         if qry_del is not None and get_jwt_claims['id'] == id: 
             db.session.delete(qry_del)
             db.session.commit()
-            return {"code": 200, "message": "OK, your user profile has been created", "data": 'User with id = %d has been deleted' % id}, 200, {'Content-Type': 'application/json'}
+            return {"code": 200, "message": "OK, your user profile has been deleted", "data": 'User with id = %d has been deleted' % id}, 200, {'Content-Type': 'application/json'}
         return {"code": 404, "message": "Failed to edit. Wrong username or password"}, 404, {'Content-Type': 'application/json'}
         
     def patch(self):
