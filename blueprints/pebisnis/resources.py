@@ -38,14 +38,15 @@ class PebisnisResource(Resource):
         parser.add_argument('phone_no', location='json')
         parser.add_argument('address', location='json')
         parser.add_argument('deskripsi', location='json')
-        args = parser.parse_args()
+        parser.add_argument('url_image', location='json')
+        args = parser.parse_args() 
 
         validation = policy.test(args['password'])
         
         if validation == [] :
             user_type = 'pebisnis'
             password = hashlib.md5(args['password'].encode()).hexdigest()
-            user_new = Pebisnis('pebisnis', args['username'], password, args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()))
+            user_new = Pebisnis('pebisnis', args['username'], password, args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()),args['url_image'])
             db.session.add(user_new) #insert the input data into the database
             db.session.commit() 
             return {"code": 200, "message": "OK, your user profile has been created", "data":marshal(user_new, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
@@ -68,8 +69,9 @@ class PebisnisResource(Resource):
         parser.add_argument('phone_no', location='json')
         parser.add_argument('address', location='json')
         parser.add_argument('deskripsi', location='json')
+        parser.add_argument('url_image', location='json')
         args = parser.parse_args()
-
+        
         validation = policy.test(args['password'])
 
         if validation == [] :
@@ -93,6 +95,9 @@ class PebisnisResource(Resource):
                     qry_user.address = args['address']
                 if args['deskripsi'] is not None:
                     qry_user.deskripsi = args['deskripsi']
+                if args['url_image'] is not None:
+                    qry_user.url_image = args['url_image']
+                    
                 db.session.commit()
                 return {"code": 200, "message": "OK, your user profile has been created", "data": marshal(qry_user, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}
             return {"code": 404, "message": "Failed to edit. Wrong username or password"}, 404, {'Content-Type': 'application/json'}

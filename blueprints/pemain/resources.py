@@ -71,7 +71,7 @@ class PemainResources(Resource):
         parser.add_argument('phone_no', location = 'json',default = marshal_pemain["phone_no"])
         parser.add_argument('address', location = 'json',default = marshal_pemain["address"])
         parser.add_argument('favourite_sport', location = 'json',default = marshal_pemain["favourite_sport"])
-
+        parser.add_argument('url_image', location = 'json',default = marshal_pemain["url_image"])
         args = parser.parse_args()
 
         validation = policy.test(args['password'])
@@ -83,6 +83,7 @@ class PemainResources(Resource):
             qry.phone_no = args['phone_no']
             qry.address = args['address']
             qry.favourite_sport = args['favourite_sport']
+            qry.url_image = args['url_image']
             db.session.commit()
             marshal_pemain = marshal(qry, Pemain.response_field)
             return {'status' : 'Success Change', 'data' : marshal_pemain}, 200, {'Content_type' : 'application/json'}
@@ -103,8 +104,10 @@ class PemainResources(Resource):
         parser.add_argument('phone_no', location = 'json')
         parser.add_argument('address', location = 'json', required = True)
         parser.add_argument('favourite_sport', location = 'json', required = True)
+        parser.add_argument('url_image', location = 'json', required = True)
         args = parser.parse_args()
 
+        pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()),args['url_image'])
         validation = policy.test(args['password'])
 
         if validation == [] :
