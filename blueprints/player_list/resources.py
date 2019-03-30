@@ -2,7 +2,8 @@ import json, logging
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from flask_jwt_extended import jwt_required, get_jwt_claims
-
+from ..pemain import *
+from ..bookingrequest import *
 from . import *
 
 bp_playerlist = Blueprint('playerlist', __name__)
@@ -30,14 +31,29 @@ class PlayerListResources(Resource):
                 rows.append(marshal(row, PlayerList.response_field))
 
             return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
+
         else :
+
             qry = PlayerList.query.filter_by(booking_id=playerlist_endpoint)
+            
             rows = []
+            player = []
             for row in qry :
-                rows.append(marshal(row, PlayerList.response_field))              
+                rows.append(marshal(row, PlayerList.response_field))
+            qry_booking = BookingRequest.query.get(rows[0]['booking_id'])
+            get_player = marshal(qry_booking, BookingRequest.response_field)["player"]
+
+            for i in range(int(get_player)):
+                try:
+                    qry_pemain = Pemain.query.get(rows[i]["pemain_id"])
+                    marshal_pemain = marshal(qry_pemain, Pemain.response_field)
+                    player.append(marshal_pemain)
+                except:
+                    player.append({"user_type":"empty"})
+
             if rows is not None:
-                return {'status':'success', 'data': rows}, 200, {'Content-Type': 'application/json'}
-            return {'status': 'NOT FOUND','message':'Not found'}, 404, {'Content-Type':'application/json'}
+                return {'status':'success', 'data': rows, "pemain":player}, 200, {'Content-Type': 'application/json'}
+            return {'status': 'NOT FOUND','m':'Not found'}, 404, {'Content-Type':'application/json'}
     
     @jwt_required
     def delete(self, playerlist_endpoint):
@@ -76,10 +92,19 @@ class PlayerListResources(Resource):
         parser.add_argument('booking_id', location = 'json', type=int, required=True)
         args = parser.parse_args()
 
-        playerlist = PlayerList(None, args['booking_id'], jwtclaim['id'],  jwtclaim['name'])
+        qry_booking = BookingRequest.query.get(args['booking_id'])
+        get_player = marshal(qry_booking, BookingRequest.response_field)["player"]
+
+        qry = PlayerList.query.filter(PlayerList.booking_id.like(args['booking_id'])).all()
+
+        for row in qry :
+            if(jwtclaim['id'] == marshal(row, PlayerList.response_field)['pemain_id']):
+                return {'status' : 'failed', "message":"Player Already Exist"},401,{'Content_type' : 'application/json'}
+            
+        playerlist = PlayerList(None, args['booking_id'], jwtclaim['id'], jwtclaim['name'], get_player)
         db.session.add(playerlist)
         db.session.commit()
 
-        return {'status' : 'Success','data' : marshal(playerlist, PlayerList.response_field)}, 200, {'Content_type' : 'application/json'}
+        return {'status' : 'Success','data' : marshal(qry, PlayerList.response_field)}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
