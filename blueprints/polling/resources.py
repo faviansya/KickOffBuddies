@@ -60,24 +60,3 @@ class PollingResource(Resource):
 
 api.add_resource(PollingResource, '', '/<int:id>')
 
-# class PollingResult(Resource): 
-
-#     def __init__(self):
-#         pass
-          
-#     def post(self): 
-#         parser = reqparse.RequestParser()
-#         parser.add_argument('sport', location='json')
-#         args = parser.parse_args() 
-#         qry = Polling.query #select * from where id = id
-#         qry = qry.filter_by(sport=args["sport"])
-#         hasil_jumlah_polling = 0
-#         for row in qry.all() : 
-#             if row.sport == args['sport']:
-#                 hasil_jumlah_polling += 1
-#         return {"status": "200 OK", "message": "Result polling for that sport is on display", "data": hasil_jumlah_polling}, 200, {'Content-Type': 'application/json'}   
-        
-#     def patch(self):
-#         return 'Not yet implemented', 501
-
-# api.add_resource(PollingResult, '/result', '/result/<int:id>')

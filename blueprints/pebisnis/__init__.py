@@ -33,7 +33,6 @@ class Pebisnis(db.Model):
         'deskripsi' : fields.String,
         'created_time': fields.String,
         'url_image': fields.String,
-
     }
   
     def __init__(self, user_type, username, password, name, nama_tempat, lapangan, email, phone_no, address, deskripsi, created_time,url_image):
@@ -48,8 +47,8 @@ class Pebisnis(db.Model):
         self.address = address
         self.deskripsi = deskripsi
         self.created_time = created_time        
-        self.url_image = url_image        
-
+        self.url_image = url_image      
+        
     def __repr__(self): #initiate table model
         return '<Pebisnis %r>' % self.id 
   

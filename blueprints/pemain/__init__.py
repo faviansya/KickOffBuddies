@@ -30,7 +30,6 @@ class Pemain(db.Model):
         'user_type': fields.String,
         'created_time': fields.String,
         'url_image': fields.String,
-
     }
 
     def __init__(self, username, password, name,email,phone_no,address,favourite_sport, user_type, created_time,url_image):
