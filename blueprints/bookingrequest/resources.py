@@ -31,7 +31,7 @@ class BookingRequestResources(Resource):
                 rows.append(marshal(row, BookingRequest.response_field))
 
             return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
-        else :
+        else:
             qry = BookingRequest.query.get(request_endpoint)
             data = marshal(qry, BookingRequest.response_field)              
             if qry is not None:
@@ -89,14 +89,17 @@ class BookingRequestResources(Resource):
         if(args['sport'] == "badminton"):
             image = "http://indodjaja.com/KickOffBuddies/badminton.jpg"
 
-        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'wait',image)
+        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'wait',image, 1)
         db.session.add(booking_request)
         db.session.commit()
 
         qry = BookingRequest.query.order_by(desc(BookingRequest.id)).first()
         marshal_bookingrequest = marshal(qry, BookingRequest.response_field)
+        pemain_now = marshal_bookingrequest["pemain_saat_ini"]
+        if(pemain_now <= 1):
+            pemain_now = 1
 
-        player_listing = PlayerList(None, marshal_bookingrequest['id'],jwtclaim['id'], jwtclaim['name'],marshal_bookingrequest['player'])
+        player_listing = PlayerList(None, marshal_bookingrequest['id'],jwtclaim['id'], jwtclaim['name'],marshal_bookingrequest['player'],pemain_now)
         db.session.add(player_listing)
         db.session.commit()
 
