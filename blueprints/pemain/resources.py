@@ -112,14 +112,16 @@ class PemainResources(Resource):
         parser.add_argument('phone_no', location = 'json')
         parser.add_argument('address', location = 'json', required = True)
         parser.add_argument('favourite_sport', location = 'json', required = True)
+        parser.add_argument('url_image', location = 'json', required = True)
         args = parser.parse_args()
 
+        # pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()),args['url_image'])
         validation = policy.test(args['password'])
 
         if validation == [] :
             password = hashlib.md5(args['password'].encode()).hexdigest()
     
-            pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()))
+            pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()),args['url_image'])
             db.session.add(pemain)
             db.session.commit()
     

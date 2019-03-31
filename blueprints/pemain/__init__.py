@@ -16,7 +16,7 @@ class Pemain(db.Model):
     favourite_sport= db.Column(db.String(100))
     user_type = db.Column(db.String(100))
     created_time = db.Column(db.String(100))
-    url_image = db.Column(db.String(100))
+    url_image = db.Column(db.String(1000))
 
     response_field = {
         'id': fields.Integer,
@@ -29,11 +29,10 @@ class Pemain(db.Model):
         'favourite_sport': fields.String,
         'user_type': fields.String,
         'created_time': fields.String,
-        'url_image': fields.String
-
+        'url_image': fields.String,
     }
 
-    def __init__(self, username, password, name,email,phone_no,address,favourite_sport, user_type, created_time, url_image):
+    def __init__(self, username, password, name,email,phone_no,address,favourite_sport, user_type, created_time,url_image):
         self.username = username
         self.password = password
         self.name = name
