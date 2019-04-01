@@ -163,7 +163,7 @@ class PlayerListResources(Resource):
                         db.session.commit()
                         rows.append(data_marshal)
 
-
+        
         return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
