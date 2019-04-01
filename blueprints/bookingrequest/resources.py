@@ -85,9 +85,9 @@ class BookingRequestResources(Resource):
         args = parser.parse_args()
 
         if(args['sport'] == "basket"):
-            image = "http://indodjaja.com/KickOffBuddies/Basketball2.jpg"
+            image = "http://indodjaja.com/KickOffBuddies/SportCategory/Basket.png"
         if(args['sport'] == "badminton"):
-            image = "http://indodjaja.com/KickOffBuddies/badminton.jpg"
+            image = "http://indodjaja.com/KickOffBuddies/SportCategory/Badminton.png"
 
         booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'wait',image, 1)
         db.session.add(booking_request)
