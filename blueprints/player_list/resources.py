@@ -142,11 +142,12 @@ class PlayerListResources(Resource):
 
         qry = PlayerList.query.filter(PlayerList.booking_id.like(args['booking_id'])).all()
         pemain_now = marshal(qry_booking, BookingRequest.response_field)["pemain_saat_ini"]
+        pemain_sisa = marshal(qry_booking, BookingRequest.response_field)["player"]
         marshal_booking = marshal(qry_booking, BookingRequest.response_field)
         getID = marshal(qry, PlayerList.response_field)
         rows = []
         counter = 0
-        if(pemain_now >= len(marshal(qry, PlayerList.response_field))):
+        if(pemain_now >= pemain_sisa):
             for data in qry:
                 data_marshal = marshal(data, PlayerList.response_field)
                 counter +=1
@@ -163,6 +164,6 @@ class PlayerListResources(Resource):
                         rows.append(data_marshal)
 
 
-        return {"len":pemain_now, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
+        return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
