@@ -5,6 +5,8 @@ from flask_jwt_extended import jwt_required, get_jwt_claims
 from ..pemain import *
 from ..bookingrequest import *
 from . import *
+from ..accepted_booking import *
+
 
 bp_playerlist = Blueprint('playerlist', __name__)
 api = Api(bp_playerlist)
@@ -129,14 +131,38 @@ class PlayerListResources(Resource):
         qry_booking.pemain_saat_ini = pemain_now
         qry = PlayerList.query.filter(PlayerList.booking_id.like(args['booking_id'])).all()
         
-        for row in qry :
+        for row in qry:
             if(jwtclaim['id'] == marshal(row, PlayerList.response_field)['pemain_id']):
                 return {'status' : 'failed', "message":"Player Already Exist"},401,{'Content_type' : 'application/json'}
-            
-        playerlist = PlayerList(None, args['booking_id'], jwtclaim['id'], jwtclaim['name'], get_player, pemain_now)
+
+        playerlist = PlayerList(None, args['booking_id'], jwtclaim['id'], jwtclaim['name'],jwtclaim['url_image'], get_player, pemain_now)
+        
         db.session.add(playerlist)
         db.session.commit()
 
-        return {'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field)}, 200, {'Content_type' : 'application/json'}
+        qry = PlayerList.query.filter(PlayerList.booking_id.like(args['booking_id'])).all()
+        pemain_now = marshal(qry_booking, BookingRequest.response_field)["pemain_saat_ini"]
+        marshal_booking = marshal(qry_booking, BookingRequest.response_field)
+        getID = marshal(qry, PlayerList.response_field)
+        rows = []
+        counter = 0
+        if(pemain_now >= len(marshal(qry, PlayerList.response_field))):
+            for data in qry:
+                data_marshal = marshal(data, PlayerList.response_field)
+                counter +=1
+                for i in getID:
+                    if counter == 1:
+                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,1)
+                        db.session.add(inputToAcceptedBooking)
+                        db.session.commit()
+                        rows.append(data_marshal)
+                    else:
+                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,0)
+                        db.session.add(inputToAcceptedBooking)
+                        db.session.commit()
+                        rows.append(data_marshal)
+
+
+        return {"len":pemain_now, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
