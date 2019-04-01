@@ -25,7 +25,6 @@ class BookingRequest(db.Model):
         'status' : fields.String,
         'url_image' : fields.String,
         'pemain_saat_ini': fields.Integer,
-
     }
 
     def __init__(self, id, id_user, sport, player, time, location, status,url_image, pemain_saat_ini):

@@ -99,7 +99,7 @@ class BookingRequestResources(Resource):
         if(pemain_now <= 1):
             pemain_now = 1
 
-        player_listing = PlayerList(None, marshal_bookingrequest['id'],jwtclaim['id'], jwtclaim['name'],marshal_bookingrequest['player'],pemain_now)
+        player_listing = PlayerList(None, marshal_bookingrequest['id'],jwtclaim['id'], jwtclaim['name'],jwtclaim['url_image'],marshal_bookingrequest['player'],pemain_now)
         db.session.add(player_listing)
         db.session.commit()
 
