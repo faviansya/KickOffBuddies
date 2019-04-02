@@ -33,7 +33,6 @@ class PebisnisResource(Resource):
         parser.add_argument('password', location='json')
         parser.add_argument('name', location='json')
         parser.add_argument('nama_tempat', location='json')
-        parser.add_argument('lapangan', location='json')
         parser.add_argument('email', location='json')
         parser.add_argument('phone_no', location='json')
         parser.add_argument('address', location='json')
@@ -46,7 +45,7 @@ class PebisnisResource(Resource):
         if validation == [] :
             user_type = 'pebisnis'
             password = hashlib.md5(args['password'].encode()).hexdigest()
-            user_new = Pebisnis('pebisnis', args['username'], password, args['name'], args['nama_tempat'], args['lapangan'], args['email'], args['phone_no'], args['address'], args['deskripsi'], str(datetime.datetime.now()),args['url_image'])
+            user_new = Pebisnis('pebisnis', args['username'], password, args['name'], args['nama_tempat'], args['email'], args['phone_no'], args['address'], args['deskripsi'], args['url_image'])
             db.session.add(user_new) #insert the input data into the database
             db.session.commit() 
             return {"code": 200, "message": "OK, your user profile has been created", "data":marshal(user_new, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
@@ -61,10 +60,10 @@ class PebisnisResource(Resource):
             special=1,
         )
         parser = reqparse.RequestParser()
+        parser.add_argument('username', location='json')
         parser.add_argument('password', location='json')
         parser.add_argument('name', location='json')
         parser.add_argument('nama_tempat', location='json')
-        parser.add_argument('lapangan', location='json')
         parser.add_argument('email', location='json')
         parser.add_argument('phone_no', location='json')
         parser.add_argument('address', location='json')
@@ -78,10 +77,32 @@ class PebisnisResource(Resource):
             validation = policy.test(args['password'])
             if validation == [] :
                 password = hashlib.md5(args['password'].encode()).hexdigest()
-                qry.password = password
+                qry_user.password = password
+                if args['username'] is not None:
+                    qry_user.username = args['username']
+                if args['nama_tempat'] is not None:
+                    qry_user.nama_tempat = args['nama_tempat']
+                if args['password'] is not None:
+                    qry_user.password = password
+                if args['name'] is not None:
+                    qry_user.name = args['name']
+                if args['email'] is not None:
+                    qry_user.email = args['email']
+                if args['phone_no'] is not None:
+                    qry_user.phone_no = args['phone_no']
+                if args['address'] is not None:
+                    qry_user.address = args['address']
+                if args['deskripsi'] is not None:
+                    qry_user.deskripsi = args['deskripsi']
+                if args['url_image'] is not None:
+                    qry_user.url_image = args['url_image']
+                db.session.commit()
+                return {"code": 200, "message": "OK, your user profile has been created", "data": marshal(qry_user, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}
+            return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
+
         else:
-            if args['lapangan'] is not None:
-                qry_user.lapangan = args['lapangan']
+            if args['username'] is not None:
+                qry_user.username = args['username']
             if args['nama_tempat'] is not None:
                 qry_user.nama_tempat = args['nama_tempat']
             if args['password'] is not None:
@@ -100,16 +121,13 @@ class PebisnisResource(Resource):
                 qry_user.url_image = args['url_image']
             db.session.commit()
             return {"code": 200, "message": "OK, your user profile has been created", "data": marshal(qry_user, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}
-        return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
 
     @jwt_required 
-    def delete(self, id):
-        qry_del = Pebisnis.query.get(id)
-        if qry_del is not None and get_jwt_claims['id'] == id: 
-            db.session.delete(qry_del)
-            db.session.commit()
-            return {"code": 200, "message": "OK, your user profile has been deleted", "data": 'User with id = %d has been deleted' % id}, 200, {'Content-Type': 'application/json'}
-        return {"code": 404, "message": "Failed to edit. Wrong username or password"}, 404, {'Content-Type': 'application/json'}
+    def delete(self):
+        qry_del = Pebisnis.query.get(get_jwt_claims()['id'])
+        db.session.delete(qry_del)
+        db.session.commit()
+        return {"code": 200, "message": "OK, your user profile has been deleted", "data": 'User has been deleted'}, 200, {'Content-Type': 'application/json'}
         
     def patch(self):
         return 'Not yet implemented', 501
