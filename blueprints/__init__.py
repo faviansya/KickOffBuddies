@@ -49,6 +49,8 @@ from blueprints.player_list.resources import bp_playerlist
 from blueprints.polling.resources import bp_polling
 from blueprints.pelapak.resources import bp_tempat_olahraga
 from blueprints.accepted_booking.resources import bp_acceptedbooking
+from blueprints.googleHandler.resources import bp_googlehandler
+
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
 app.register_blueprint(bp_pemain, url_prefix='/api/pemain')
@@ -58,6 +60,7 @@ app.register_blueprint(bp_playerlist, url_prefix='/api/playerlist')
 app.register_blueprint(bp_polling, url_prefix='/api/polling')
 app.register_blueprint(bp_tempat_olahraga, url_prefix='/api/places')
 app.register_blueprint(bp_acceptedbooking, url_prefix='/api/acceptbooking')
+app.register_blueprint(bp_googlehandler, url_prefix='/api/google')
 
 
 db.create_all()

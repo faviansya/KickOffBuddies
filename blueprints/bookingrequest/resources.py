@@ -84,7 +84,7 @@ class BookingRequestResources(Resource):
         parser.add_argument('location', location = 'json', required=True)
         args = parser.parse_args()
 
-        if(args['sport'] == "basket"):
+        if(args['sport'] == "basketball"):
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Basket.png"
         if(args['sport'] == "badminton"):
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Badminton.png"

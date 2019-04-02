@@ -9,8 +9,8 @@ class PlayerList(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     booking_id = db.Column(db.Integer)
     pemain_id = db.Column(db.Integer)
-    pemain_name = db.Column(db.String(100))
-    pemain_image = db.Column(db.String(100))
+    pemain_name = db.Column(db.String(1000))
+    pemain_image = db.Column(db.String(1000))
     jumlah_pemain = db.Column(db.Integer)
     pemain_saat_ini = db.Column(db.Integer)
     
