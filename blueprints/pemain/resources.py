@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import datetime
+from password_strength import PasswordPolicy
 
 from . import *
 
@@ -52,35 +53,57 @@ class PemainResources(Resource):
 
     @jwt_required
     def put(self):
+        policy = PasswordPolicy.from_names(
+            length=6,
+            uppercase=1,
+            numbers=1,
+            special=1,
+        )
         jwtclaim = get_jwt_claims()
+        
         qry = Pemain.query.get(jwtclaim['id'])
         marshal_pemain = marshal(qry, Pemain.response_field)
 
         parser = reqparse.RequestParser()
-        parser.add_argument('password', location = 'json',default = marshal_pemain["password"])
-        parser.add_argument('name', location = 'json',default = marshal_pemain["name"])
-        parser.add_argument('email', location = 'json',default = marshal_pemain["email"])
-        parser.add_argument('phone_no', location = 'json',default = marshal_pemain["phone_no"])
-        parser.add_argument('address', location = 'json',default = marshal_pemain["address"])
-        parser.add_argument('favourite_sport', location = 'json',default = marshal_pemain["favourite_sport"])
-
+        parser.add_argument('password', location = 'json')
+        parser.add_argument('name', location = 'json')
+        parser.add_argument('email', location = 'json')
+        parser.add_argument('phone_no', location = 'json')
+        parser.add_argument('address', location = 'json')
+        parser.add_argument('favourite_sport', location = 'json')
+        parser.add_argument('url_image', location = 'json')
         args = parser.parse_args()
 
-        password = hashlib.md5(args['password'].encode()).hexdigest()
-
-        qry.password = password
-        qry.name = args['name']
-        qry.email = args['email']
-        qry.phone_no = args['phone_no']
-        qry.address = args['address']
-        qry.favourite_sport = args['favourite_sport']
-
-        db.session.commit()
-        marshal_pemain = marshal(qry, Pemain.response_field)
-
-        return {'status' : 'Success Change', 'data' : marshal_pemain}, 200, {'Content_type' : 'application/json'}
+        if args['password'] is not None:
+            validation = policy.test(args['password'])
+            if validation == [] :
+                password = hashlib.md5(args['password'].encode()).hexdigest()
+                qry.password = password
+        else:
+            if args['name'] is not None:
+                qry.name = args['name']
+            if args['email'] is not None:
+                qry.email = args['email']
+            if args['phone_no'] is not None:
+                qry.phone_no = args['phone_no']
+            if args['address'] is not None:
+                qry.address = args['address']
+            if args['favourite_sport'] is not None:
+                qry.favourite_sport = args['favourite_sport']
+            if args['url_image'] is not None:
+                qry.url_image = args['url_image']
+            db.session.commit()
+            marshal_pemain = marshal(qry, Pemain.response_field)
+            return {'status' : 'Success Change', 'data' : marshal_pemain}, 200, {'Content_type' : 'application/json'}
+        return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
 
     def post(self):
+        policy = PasswordPolicy.from_names(
+            length=6,
+            uppercase=1,
+            numbers=1,
+            special=1,
+        )
         parser = reqparse.RequestParser()
         parser.add_argument('username', location = 'json', required = True)
         parser.add_argument('password', location = 'json', required = True)
@@ -89,13 +112,20 @@ class PemainResources(Resource):
         parser.add_argument('phone_no', location = 'json')
         parser.add_argument('address', location = 'json', required = True)
         parser.add_argument('favourite_sport', location = 'json', required = True)
+        parser.add_argument('url_image', location = 'json', required = True)
         args = parser.parse_args()
-        password = hashlib.md5(args['password'].encode()).hexdigest()
 
-        pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()))
-        db.session.add(pemain)
-        db.session.commit()
+        # pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()),args['url_image'])
+        validation = policy.test(args['password'])
 
-        return {'status' : 'Success', 'data' : marshal(pemain, Pemain.response_field)}, 200, {'Content_type' : 'application/json'}
+        if validation == [] :
+            password = hashlib.md5(args['password'].encode()).hexdigest()
+    
+            pemain = Pemain(args['username'],password,args['name'],args['email'],args['phone_no'],args['address'],args['favourite_sport'],"pemain",str(datetime.datetime.now()),args['url_image'])
+            db.session.add(pemain)
+            db.session.commit()
+    
+            return {'status' : 'Success', 'data' : marshal(pemain, Pemain.response_field)}, 200, {'Content_type' : 'application/json'}
+        return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
 
 api.add_resource(PemainResources, '', '/<pemain_endpoint>')

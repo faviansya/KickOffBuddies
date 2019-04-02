@@ -2,8 +2,9 @@ import json, logging
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from flask_jwt_extended import jwt_required, get_jwt_claims
-
+from ..player_list import *
 from . import *
+from sqlalchemy import desc
 
 bp_bookingrequest = Blueprint('booking request', __name__)
 api = Api(bp_bookingrequest)
@@ -30,7 +31,7 @@ class BookingRequestResources(Resource):
                 rows.append(marshal(row, BookingRequest.response_field))
 
             return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
-        else :
+        else:
             qry = BookingRequest.query.get(request_endpoint)
             data = marshal(qry, BookingRequest.response_field)              
             if qry is not None:
@@ -56,7 +57,6 @@ class BookingRequestResources(Resource):
         parser.add_argument('player', location = 'json', type=int, required=True)
         parser.add_argument('time', location = 'json', required=True)
         parser.add_argument('location', location = 'json', required=True)
-
         args = parser.parse_args()
 
         qry = BookingRequest.query.get(request_endpoint)
@@ -76,20 +76,34 @@ class BookingRequestResources(Resource):
     @jwt_required
     def post(self):
         jwtclaim = get_jwt_claims()
-
+        image = None
         parser = reqparse.RequestParser()
         parser.add_argument('sport', location = 'json', required=True)
         parser.add_argument('player', location = 'json', type=int, required=True)
         parser.add_argument('time', location = 'json', required=True)
         parser.add_argument('location', location = 'json', required=True)
-
         args = parser.parse_args()
 
-        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'waiting for players')
+        if(args['sport'] == "basketball"):
+            image = "http://indodjaja.com/KickOffBuddies/SportCategory/Basket.png"
+        if(args['sport'] == "badminton"):
+            image = "http://indodjaja.com/KickOffBuddies/SportCategory/Badminton.png"
+
+        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'wait',image, 1)
         db.session.add(booking_request)
         db.session.commit()
 
-        return {'status' : 'Success','data' : marshal(booking_request, BookingRequest.response_field)}, 200, {'Content_type' : 'application/json'}
+        qry = BookingRequest.query.order_by(desc(BookingRequest.id)).first()
+        marshal_bookingrequest = marshal(qry, BookingRequest.response_field)
+        pemain_now = marshal_bookingrequest["pemain_saat_ini"]
+        if(pemain_now <= 1):
+            pemain_now = 1
+
+        player_listing = PlayerList(None, marshal_bookingrequest['id'],jwtclaim['id'], jwtclaim['name'],jwtclaim['url_image'],marshal_bookingrequest['player'],pemain_now)
+        db.session.add(player_listing)
+        db.session.commit()
+
+        return {'status' : 'Success','data' : marshal(qry, BookingRequest.response_field)}, 200, {'Content_type' : 'application/json'}
 
 class MyBookingResources(Resource):
     @jwt_required
@@ -109,5 +123,35 @@ class MyBookingResources(Resource):
             rows.append(marshal(row, BookingRequest.response_field))
         return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
 
+class SearchBookingResources(Resource):
+    @jwt_required
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', location = 'args')
+        args = parser.parse_args()
+        jwtclaim = get_jwt_claims()
+
+        qry = BookingRequest.query.filter(BookingRequest.sport.like("%"+args['name']+"%")).all()
+        rows = []
+        for row in qry:
+            rows.append(marshal(row, BookingRequest.response_field))
+        return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
+
+class CategoryBookingResources(Resource):
+    @jwt_required
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('category', location = 'args')
+        args = parser.parse_args()
+        jwtclaim = get_jwt_claims()
+
+        qry = BookingRequest.query.filter(BookingRequest.sport.like("%"+args['category']+"%")).all()
+        rows = []
+        for row in qry:
+            rows.append(marshal(row, BookingRequest.response_field))
+        return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
+
 api.add_resource(BookingRequestResources, '', '/<request_endpoint>')
 api.add_resource(MyBookingResources, '/mybooking')
+api.add_resource(SearchBookingResources, '/search')
+api.add_resource(CategoryBookingResources, '/category')
