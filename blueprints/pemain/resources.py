@@ -45,7 +45,7 @@ class PemainResources(Resource):
     
     @jwt_required
     def delete(self):
-        qry = Pemain.query.get(jwtclaim['id'])
+        qry = Pemain.query.get(get_jwt_claims()['id'])
         db.session.delete(qry)
         db.session.commit()
 
@@ -79,6 +79,22 @@ class PemainResources(Resource):
             if validation == [] :
                 password = hashlib.md5(args['password'].encode()).hexdigest()
                 qry.password = password
+                if args['name'] is not None:
+                    qry.name = args['name']
+                if args['email'] is not None:
+                    qry.email = args['email']
+                if args['phone_no'] is not None:
+                    qry.phone_no = args['phone_no']
+                if args['address'] is not None:
+                    qry.address = args['address']
+                if args['favourite_sport'] is not None:
+                    qry.favourite_sport = args['favourite_sport']
+                if args['url_image'] is not None:
+                    qry.url_image = args['url_image']
+                db.session.commit()
+                marshal_pemain = marshal(qry, Pemain.response_field)
+                return {'status' : 'Success Change', 'data' : marshal_pemain}, 200, {'Content_type' : 'application/json'}
+            return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
         else:
             if args['name'] is not None:
                 qry.name = args['name']
@@ -95,7 +111,6 @@ class PemainResources(Resource):
             db.session.commit()
             marshal_pemain = marshal(qry, Pemain.response_field)
             return {'status' : 'Success Change', 'data' : marshal_pemain}, 200, {'Content_type' : 'application/json'}
-        return {'status' : 'Password Invalid'}, 400, {'Content_type' : 'application/json'}
 
     def post(self):
         policy = PasswordPolicy.from_names(
