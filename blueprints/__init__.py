@@ -47,7 +47,6 @@ from blueprints.pebisnis.resources import bp_pebisnis
 from blueprints.bookingrequest.resources import bp_bookingrequest
 from blueprints.player_list.resources import bp_playerlist
 from blueprints.polling.resources import bp_polling
-from blueprints.pelapak.resources import bp_tempat_olahraga
 from blueprints.accepted_booking.resources import bp_acceptedbooking
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
@@ -56,7 +55,6 @@ app.register_blueprint(bp_bookingrequest, url_prefix='/api/booking')
 app.register_blueprint(bp_pebisnis, url_prefix='/api/pebisnis')
 app.register_blueprint(bp_playerlist, url_prefix='/api/playerlist')
 app.register_blueprint(bp_polling, url_prefix='/api/polling')
-app.register_blueprint(bp_tempat_olahraga, url_prefix='/api/places')
 app.register_blueprint(bp_acceptedbooking, url_prefix='/api/acceptbooking')
 
 
