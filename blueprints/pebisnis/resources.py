@@ -15,11 +15,27 @@ class PebisnisResource(Resource):
     def __init__(self):
         pass
           
-    @jwt_required  
-    def get(self):
-        id = get_jwt_claims()['id']
-        qry = Pebisnis.query.get(id) #select * from where id = id
-        return {"status": "200 OK", "message": "Your user profile is on display", "data": marshal(qry, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
+    def get(self, id = None):
+        if id == None :
+            parser = reqparse.RequestParser()
+            parser.add_argument('p', type = int, location = 'args', default = 1)
+            parser.add_argument('rp', type = int, location = 'args', default = 50)
+            args = parser.parse_args()
+
+            offside = (args['p'] * args['rp']) - args['rp']
+            qry = Pebisnis.query
+
+            rows = []
+            for row in qry.limit(args['rp']).offset(offside).all():
+                rows.append(marshal(row, Pebisnis.response_field))
+
+            return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
+        else:
+            qry = Pebisnis.query.get(id)
+            data = marshal(qry, Pebisnis.response_field)              
+            if qry is not None:
+                return {'status':'success', 'data': data}, 200, {'Content-Type': 'application/json'}
+            return {'status': 'NOT FOUND','message':'Pebisnis not found'}, 404, {'Content-Type':'application/json'}
 
     def post(self): #for pebisnis to register 
         policy = PasswordPolicy.from_names(
@@ -132,4 +148,12 @@ class PebisnisResource(Resource):
     def patch(self):
         return 'Not yet implemented', 501
 
+class PebisnisSelfResource(Resource): 
+    @jwt_required  
+    def get(self):
+        id = get_jwt_claims()['id']
+        qry = Pebisnis.query.get(id) #select * from where id = id
+        return {"status": "200 OK", "message": "Your user profile is on display", "data": marshal(qry, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
+
 api.add_resource(PebisnisResource, '', '/<int:id>')
+api.add_resource(PebisnisSelfResource, '', '/myprofile')
