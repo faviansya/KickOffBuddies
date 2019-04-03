@@ -6,6 +6,8 @@ from ..pemain import *
 from ..bookingrequest import *
 from . import *
 from ..accepted_booking import *
+from ..chatBookingRoom import *
+from ..chatPlayerList import *
 
 
 bp_playerlist = Blueprint('playerlist', __name__)
@@ -147,9 +149,13 @@ class PlayerListResources(Resource):
         getID = marshal(qry, PlayerList.response_field)
         rows = []
         counter = 0
+        flagChatting = False
+        playerRooms = []
         if(pemain_now >= pemain_sisa):
+            flagChatting = True
             for data in qry:
                 data_marshal = marshal(data, PlayerList.response_field)
+                playerRooms.append(data_marshal)
                 counter +=1
                 for i in getID:
                     if counter == 1:
@@ -163,7 +169,22 @@ class PlayerListResources(Resource):
                         db.session.commit()
                         rows.append(data_marshal)
 
+        if (flagChatting):
+            addRoomChat = ChatBookingRoom(args["booking_id"],jwtclaim['id'],marshal_booking["location"],marshal_booking["time"],marshal_booking["sport"])
+            db.session.add(addRoomChat)
+            db.session.commit()
+
+            qry_chatroom = ChatBookingRoom.query.filter(ChatBookingRoom.booking_id.like(args["booking_id"])).all()
+            marshal_chatroom = marshal(qry_chatroom, ChatBookingRoom.response_field)
+            # return {"ChatROom":marshal_chatroom, "ID":args["booking_id"], "pemain" : playerRooms}
+            for player in playerRooms:
+                addPlayerToChat = ChatPlayerList(marshal_chatroom[0]['id'],player["pemain_id"])
+                db.session.add(addPlayerToChat)
+                db.session.commit()
+
         
+
+
         return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
