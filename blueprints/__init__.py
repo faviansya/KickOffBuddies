@@ -51,6 +51,10 @@ from blueprints.accepted_booking.resources import bp_acceptedbooking
 from blueprints.jadwal.resources import bp_jadwal
 from blueprints.googleHandler.resources import bp_googlehandler
 from blueprints.lapangan.resources import bp_lapangan
+from blueprints.chatBookingRoom.resources import bp_chatbookingroom
+from blueprints.chatPlayerList.resources import bp_chatplayerlist
+from blueprints.chatList.resources import bp_chatlist
+
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
 app.register_blueprint(bp_pemain, url_prefix='/api/pemain')
@@ -62,5 +66,8 @@ app.register_blueprint(bp_acceptedbooking, url_prefix='/api/acceptbooking')
 app.register_blueprint(bp_jadwal, url_prefix='/api/jadwal')
 app.register_blueprint(bp_googlehandler, url_prefix='/api/google')
 app.register_blueprint(bp_lapangan, url_prefix='/api/lapangan')
+app.register_blueprint(bp_chatbookingroom, url_prefix='/api/chatroom')
+app.register_blueprint(bp_chatplayerlist, url_prefix='/api/chatplayerlist')
+app.register_blueprint(bp_chatlist, url_prefix='/api/chat')
 
 db.create_all()
