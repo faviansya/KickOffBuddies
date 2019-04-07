@@ -91,10 +91,14 @@ class BookingRequestResources(Resource):
 
         args = parser.parse_args()
 
-        if(args['sport'] == "basketball"):
+        if(args['sport'] == "Basketball"):
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Basket.png"
-        if(args['sport'] == "badminton"):
+        if(args['sport'] == "Badminton"):
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Badminton.png"
+        if(args['sport'] == "Futsal"):
+            image = "https://www.brisbanecentralfutsal.com/wp-content/uploads/2018/07/Futsal-Coaching-Player-Skills.png"
+        if(args['sport'] == "Tennis"):
+            image = "http://www.pngmart.com/files/8/Tennis-PNG-Free-Image.png"
 
         booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], args['compound'], args['vicinity'],'wait',image, 1)
         db.session.add(booking_request)
