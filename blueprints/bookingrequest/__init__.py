@@ -16,6 +16,7 @@ class BookingRequest(db.Model):
     status = db.Column(db.String(50))
     url_image = db.Column(db.String(1000))
     pemain_saat_ini = db.Column(db.Integer)
+    harga = db.Column(db.Integer)
 
     response_field = {
         'id': fields.Integer,
@@ -29,9 +30,11 @@ class BookingRequest(db.Model):
         'status' : fields.String,
         'url_image' : fields.String,
         'pemain_saat_ini': fields.Integer,
+        'harga': fields.Integer,
+
     }
 
-    def __init__(self, id, id_user, sport, player, time, location, compound, vicinity, status,url_image, pemain_saat_ini):
+    def __init__(self, id, id_user, sport, player, time, location, compound, vicinity, status,url_image, pemain_saat_ini,harga):
         self.id = id
         self.id_user = id_user
         self.sport = sport
@@ -43,6 +46,7 @@ class BookingRequest(db.Model):
         self.status = status
         self.url_image = url_image
         self.pemain_saat_ini = pemain_saat_ini
+        self.harga = harga
 
     def __repr__(self):
         return '<Booking Request %r>' % self.id
