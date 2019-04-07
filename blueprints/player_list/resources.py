@@ -153,6 +153,7 @@ class PlayerListResources(Resource):
         flagChatting = False
         flagCalendar = False
         flagMoney = False
+        flagDelete=False
         hitungpemain = 0
         playerRooms = []
         playerGoogle = []
@@ -208,7 +209,6 @@ class PlayerListResources(Resource):
                         start = hasil[0]+"T0"+hasil[1] + "-07:00"
                     else:
                         start = hasil[0]+"T"+hasil[1] + "-07:00"
-                    print (start)
 
 
                     stop = 0
@@ -218,22 +218,26 @@ class PlayerListResources(Resource):
                         stop = hasil[0]+"T0"+str(end) + ":00:00-07:00"
                     else:
                         stop = hasil[0]+"T"+str(end) + ":00:00-07:00"
-                    print (stop)
 
                     calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],start,stop,"User")
                     calendars.setCalendar()
         
         if(flagMoney):
-            print("HARGAAAAAAAAAAAAAAAAAAAAAAAAAA",marshal_booking["harga"])
-            print("HARGAAAAAAAAAAAAAAAAAAAAAAAAAA",hitungpemain)
+            flagDelete = True
 
             for player in playerRooms:
-                print("PEMAINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",player)
                 getplayer = Pemain.query.get(player["pemain_id"])
                 marshal_getplayer = marshal(getplayer, Pemain.response_field)
                 getplayer.balance = marshal_getplayer["balance"] - (marshal_booking["harga"]/hitungpemain)
                 db.session.commit()
+                
+        if(flagDelete):
+            qry_booking = BookingRequest.query.get(args['booking_id'])
+            db.session.delete(qry_booking)
+            db.session.commit()
 
-        return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
+
+        
+        return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success',"a":rows}, 200, {'Content_type' : 'application/json'}
 
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')
