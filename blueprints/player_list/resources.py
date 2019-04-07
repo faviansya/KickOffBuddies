@@ -195,7 +195,30 @@ class PlayerListResources(Resource):
                 getplayer = Pemain.query.get(player["pemain_id"])
                 marshal_getplayer = marshal(getplayer, Pemain.response_field)
                 if(marshal_getplayer["is_google"] == 1):
-                    calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],"2019-04-07T09:00:00-07:00","2019-04-07T09:00:00-07:00","User")
+                    data = marshal_booking["time"]
+                    print("TIMEEEEEEEEEEEEEEEEEEEEEEE",marshal_booking["time"])
+                    print("PLAYERRRRRRRRRRRRRRRRRRRRRR",marshal_getplayer)
+                    hasil = data.split(" ")
+
+                    start = 0
+                    tambahan = hasil[1].split(":")
+                    if(int(tambahan[0]) < 10):
+                        start = hasil[0]+"T0"+hasil[1] + "-07:00"
+                    else:
+                        start = hasil[0]+"T"+hasil[1] + "-07:00"
+                    print (start)
+
+
+                    stop = 0
+                    tambahan = hasil[1].split(":")
+                    end = int(tambahan[0]) + 1
+                    if(end < 10):
+                        stop = hasil[0]+"T0"+str(end) + ":00:00-07:00"
+                    else:
+                        stop = hasil[0]+"T"+str(end) + ":00:00-07:00"
+                    print (stop)
+
+                    calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],start,stop,"User")
                     calendars.setCalendar()
         
 

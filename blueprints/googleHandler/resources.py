@@ -59,7 +59,7 @@ class GoogleHandlerResources(Resource):
         if validation == [] :
             password = hashlib.md5(passwords.encode()).hexdigest()
 
-            pemain = Pemain(args['email'],password,args['name'],args['email'],"0","empty","empty","pemain",str(datetime.datetime.now()),args['url_image'],1)
+            pemain = Pemain(args['email'],password,args['name'],args['email'],"0","empty","empty","pemain",str(datetime.datetime.now()),args['url_image'],1,120000)
             db.session.add(pemain)
             db.session.commit()
 
