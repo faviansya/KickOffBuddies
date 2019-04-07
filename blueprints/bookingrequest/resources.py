@@ -57,6 +57,8 @@ class BookingRequestResources(Resource):
         parser.add_argument('player', location = 'json', type=int, required=True)
         parser.add_argument('time', location = 'json', required=True)
         parser.add_argument('location', location = 'json', required=True)
+        parser.add_argument('compound', location = 'json', required=True)
+        parser.add_argument('vicinity', location = 'json', required=True)
         args = parser.parse_args()
 
         qry = BookingRequest.query.get(request_endpoint)
@@ -66,6 +68,8 @@ class BookingRequestResources(Resource):
         qry.player= args['player']
         qry.time= args['time']
         qry.location= args['location']
+        qry.compound= args['compound']
+        qry.vicinity= args['vicinity']
 
         db.session.commit()
         qry = BookingRequest.query.get(request_endpoint)
@@ -82,6 +86,9 @@ class BookingRequestResources(Resource):
         parser.add_argument('player', location = 'json', type=int, required=True)
         parser.add_argument('time', location = 'json', required=True)
         parser.add_argument('location', location = 'json', required=True)
+        parser.add_argument('compound', location = 'json', required=True)
+        parser.add_argument('vicinity', location = 'json', required=True)
+
         args = parser.parse_args()
 
         if(args['sport'] == "basketball"):
@@ -89,7 +96,7 @@ class BookingRequestResources(Resource):
         if(args['sport'] == "badminton"):
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Badminton.png"
 
-        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], 'wait',image, 1)
+        booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], args['compound'], args['vicinity'],'wait',image, 1)
         db.session.add(booking_request)
         db.session.commit()
 
