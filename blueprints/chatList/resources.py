@@ -6,7 +6,7 @@ from blueprints import db
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from ..chatBookingRoom import *
 from ..pemain import *
-
+from ..chatPlayerList import *
 import datetime
 
 bp_chatlist = Blueprint('chatlist', __name__)
@@ -26,6 +26,20 @@ class ChatListResources(Resource):
 
         qry = ChatList.query.filter(ChatList.room_id.like(args["Room_id"])).all()
         marshal_qry = marshal(qry, ChatList.response_field)
+
+        qry_PlayerList = ChatPlayerList.query.filter(ChatPlayerList.room_id.like(args["Room_id"])).all()
+        marshal_qry_PlayerList=marshal(qry_PlayerList, ChatPlayerList.response_field)
+
+        players=[]
+        for player in marshal_qry_PlayerList:
+            qry_pemain= Pemain.query.get(player["user_id"])
+            marshal_pemain = marshal(qry_pemain, Pemain.response_field)
+            
+            player["name"] = marshal_pemain["name"]
+            player["url_image"] = marshal_pemain["url_image"]
+
+            players.append(player)
+
         rows = []
         for row in marshal_qry:
             qry_pemain = Pemain.query.get(row["user_id"])
@@ -35,7 +49,7 @@ class ChatListResources(Resource):
             row["url_image"] = marshal_pemain["url_image"]
             rows.append(row)
 
-        return {"status": "200 OK", "message": "All ChatList posted is on display", "data": rows}, 200, {'Content-Type': 'application/json'}   
+        return {"status": "200 OK", "message": "All ChatList posted is on display", "data": rows, "player":players}, 200, {'Content-Type': 'application/json'}   
 
     @jwt_required 
     def delete(self, id):

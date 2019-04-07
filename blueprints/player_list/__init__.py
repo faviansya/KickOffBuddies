@@ -22,10 +22,9 @@ class PlayerList(db.Model):
         'pemain_image': fields.String,
         'jumlah_pemain': fields.Integer,
         'pemain_saat_ini': fields.Integer,
-
     }
 
-    def __init__(self, id, booking_id, pemain_id,pemain_name,pemain_image,jumlah_pemain,pemain_saat_ini):
+    def __init__(self, id, booking_id, pemain_id,pemain_name,pemain_image, jumlah_pemain, pemain_saat_ini):
         self.id = id
         self.booking_id = booking_id
         self.pemain_id = pemain_id
