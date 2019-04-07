@@ -8,7 +8,8 @@ from . import *
 from ..accepted_booking import *
 from ..chatBookingRoom import *
 from ..chatPlayerList import *
-
+from ..notification import *
+from ..calendar import AppendCalendar
 
 bp_playerlist = Blueprint('playerlist', __name__)
 api = Api(bp_playerlist)
@@ -150,7 +151,9 @@ class PlayerListResources(Resource):
         rows = []
         counter = 0
         flagChatting = False
+        flagCalendar = False
         playerRooms = []
+        playerGoogle = []
         if(pemain_now >= pemain_sisa):
             flagChatting = True
             for data in qry:
@@ -170,6 +173,7 @@ class PlayerListResources(Resource):
                         rows.append(data_marshal)
 
         if (flagChatting):
+            flagCalendar = True
             addRoomChat = ChatBookingRoom(args["booking_id"],jwtclaim['id'],marshal_booking["location"],marshal_booking["time"],marshal_booking["sport"])
             db.session.add(addRoomChat)
             db.session.commit()
@@ -182,6 +186,17 @@ class PlayerListResources(Resource):
                 db.session.add(addPlayerToChat)
                 db.session.commit()
 
+                NotificationPush = Notification(player["pemain_id"], "Your Booking is Full, Check ChatRoom To Communicate With Other", "unread")
+                db.session.add(NotificationPush)
+                db.session.commit()
+
+        if(flagCalendar):
+            for player in playerRooms:
+                getplayer = Pemain.query.get(player["pemain_id"])
+                marshal_getplayer = marshal(getplayer, Pemain.response_field)
+                if(marshal_getplayer["is_google"] == 1):
+                    calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],"2019-04-07T09:00:00-07:00","2019-04-07T09:00:00-07:00","User")
+                    calendars.setCalendar()
         
 
 

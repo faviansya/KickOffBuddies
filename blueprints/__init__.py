@@ -54,6 +54,7 @@ from blueprints.lapangan.resources import bp_lapangan
 from blueprints.chatBookingRoom.resources import bp_chatbookingroom
 from blueprints.chatPlayerList.resources import bp_chatplayerlist
 from blueprints.chatList.resources import bp_chatlist
+from blueprints.notification.resources import bp_notification
 
 
 app.register_blueprint(bp_auth, url_prefix='/api/login')
@@ -69,5 +70,6 @@ app.register_blueprint(bp_lapangan, url_prefix='/api/lapangan')
 app.register_blueprint(bp_chatbookingroom, url_prefix='/api/chatroom')
 app.register_blueprint(bp_chatplayerlist, url_prefix='/api/chatplayerlist')
 app.register_blueprint(bp_chatlist, url_prefix='/api/chat')
+app.register_blueprint(bp_notification, url_prefix='/api/notification')
 
 db.create_all()
