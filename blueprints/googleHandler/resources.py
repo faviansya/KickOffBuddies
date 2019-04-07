@@ -12,6 +12,12 @@ import datetime
 bp_googlehandler = Blueprint('googlehandler', __name__)
 api = Api(bp_googlehandler)
 
+from ..calendar import calendar
+import queue
+import threading
+import time
+
+
 class GoogleHandlerResources(Resource): 
 
     def __init__(self):
@@ -53,9 +59,17 @@ class GoogleHandlerResources(Resource):
         if validation == [] :
             password = hashlib.md5(passwords.encode()).hexdigest()
 
-            pemain = Pemain(args['email'],password,args['name'],args['email'],"0","empty","empty","pemain",str(datetime.datetime.now()),args['url_image'])
+            pemain = Pemain(args['email'],password,args['name'],args['email'],"0","empty","empty","pemain",str(datetime.datetime.now()),args['url_image'],1)
             db.session.add(pemain)
             db.session.commit()
+
+            events = threading.Event()
+            myCalendar = calendar.Calendar(events,args["email"])
+            t1 = threading.Thread(target = myCalendar.flags)
+            t2 = threading.Thread(target = myCalendar.setCalendar)
+            t1.start()
+            t2.start()
+            print ("T2",t2)
 
             return {"message": "Success", "data":"registered"}, 200, {'Content-Type': 'application/json'}   
 

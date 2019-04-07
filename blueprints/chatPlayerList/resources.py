@@ -34,7 +34,14 @@ class ChatPlayerListResources(Resource):
                 qry_details = Pemain.query.get(player_detail["user_id"])
                 marshal_player_detail= marshal(qry_details, Pemain.response_field)
                 player_info.append(marshal_player_detail)
-
+            
+            
+            qry_sport_info = ChatBookingRoom.query.get(myChatRooms["room_id"])
+            marshal_qry_sport_info = marshal(qry_sport_info, ChatBookingRoom.response_field)
+            myChatRooms["location"] = marshal_qry_sport_info["lokasi"]
+            myChatRooms["waktu"] = marshal_qry_sport_info["waktu"]
+            myChatRooms["olahraga"] = marshal_qry_sport_info["olahraga"]
+            
             myChatRooms["player"] = player_info
             myRooms.append(myChatRooms)
 

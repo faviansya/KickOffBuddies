@@ -16,7 +16,6 @@ class GoogleHandler(db.Model):
         'username' : fields.Integer,
         'name' : fields.String,
         'url_image' : fields.String,
-
     }
   
     def __init__(self, username, name, url_image):
