@@ -152,6 +152,8 @@ class PlayerListResources(Resource):
         counter = 0
         flagChatting = False
         flagCalendar = False
+        flagMoney = False
+        hitungpemain = 0
         playerRooms = []
         playerGoogle = []
         if(pemain_now >= pemain_sisa):
@@ -191,13 +193,13 @@ class PlayerListResources(Resource):
                 db.session.commit()
 
         if(flagCalendar):
+            flagMoney=True
             for player in playerRooms:
+                hitungpemain = hitungpemain+1
                 getplayer = Pemain.query.get(player["pemain_id"])
                 marshal_getplayer = marshal(getplayer, Pemain.response_field)
                 if(marshal_getplayer["is_google"] == 1):
                     data = marshal_booking["time"]
-                    print("TIMEEEEEEEEEEEEEEEEEEEEEEE",marshal_booking["time"])
-                    print("PLAYERRRRRRRRRRRRRRRRRRRRRR",marshal_getplayer)
                     hasil = data.split(" ")
 
                     start = 0
@@ -221,7 +223,16 @@ class PlayerListResources(Resource):
                     calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],start,stop,"User")
                     calendars.setCalendar()
         
+        if(flagMoney):
+            print("HARGAAAAAAAAAAAAAAAAAAAAAAAAAA",marshal_booking["harga"])
+            print("HARGAAAAAAAAAAAAAAAAAAAAAAAAAA",hitungpemain)
 
+            for player in playerRooms:
+                print("PEMAINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",player)
+                getplayer = Pemain.query.get(player["pemain_id"])
+                marshal_getplayer = marshal(getplayer, Pemain.response_field)
+                getplayer.balance = marshal_getplayer["balance"] - (marshal_booking["harga"]/hitungpemain)
+                db.session.commit()
 
         return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success','data' : marshal(qry_booking, BookingRequest.response_field),"a":rows}, 200, {'Content_type' : 'application/json'}
 
