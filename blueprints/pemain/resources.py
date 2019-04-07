@@ -157,7 +157,7 @@ class PemainResources(Resource):
             password = hashlib.md5(args['password'].encode()).hexdigest()
 
             pemain = Pemain(args['username'], password, args['name'], args['email'], args['phone_no'], args['address'],
-                            args['favourite_sport'], "pemain", str(datetime.datetime.now()), args['url_image'], google)
+                            args['favourite_sport'], "pemain", str(datetime.datetime.now()), args['url_image'], google,120000)
             db.session.add(pemain)
             db.session.commit()
 
