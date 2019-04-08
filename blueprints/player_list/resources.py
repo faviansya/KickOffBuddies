@@ -236,7 +236,10 @@ class PlayerListResources(Resource):
             db.session.delete(qry_booking)
             db.session.commit()
 
-
+            qry_playerlist = PlayerList.query.filter(PlayerList.booking_id.like(args['booking_id'])).all()
+            for playerList in qry_playerlist:
+                db.session.delete(playerList)
+                db.session.commit()
         
         return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success',"a":rows}, 200, {'Content_type' : 'application/json'}
 
