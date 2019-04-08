@@ -26,7 +26,20 @@ class PemainResources(Resource):
     def get(self, pemain_endpoint=None):
         jwtclaim = get_jwt_claims()
         if pemain_endpoint is not None:
-            if pemain_endpoint == "me":
+            if pemain_endpoint == "bayar":
+                parser = reqparse.RequestParser()
+                parser.add_argument('balance', location='args')
+                args = parser.parse_args()
+
+                qry = Pemain.query.get(jwtclaim['id'])
+                marshal_pemain = marshal(qry, Pemain.response_field)
+                if(args['balance'] is not None):
+                    qry.balance = marshal_pemain['balance'] + int(args['balance'])
+                    db.session.commit()
+
+                return {'status': 'Success', 'data': marshal(qry, Pemain.response_field)['balance']}, 200, {'Content_type': 'application/json'}
+
+            elif pemain_endpoint == "me":
                 qry = Pemain.query.get(jwtclaim['id'])
                 return {'status': 'Success', 'data': marshal(qry, Pemain.response_field)}, 200, {'Content_type': 'application/json'}
             else:
