@@ -15,6 +15,7 @@ class AcceptedBooking(db.Model):
     sport_image = db.Column(db.String(500))
     player_amount = db.Column(db.Integer)
     marker = db.Column(db.Integer)
+    time = db.Column(db.String(500))
 
     response_field = {
         'id' : fields.Integer,
@@ -26,10 +27,11 @@ class AcceptedBooking(db.Model):
         'sport_image' : fields.String,
         'player_amount' : fields.Integer,
         'marker' : fields.Integer,
+        'time' : fields.String,
 
     }
   
-    def __init__(self, pemain_id, pemain_name, pemain_url_image, booking_location,sport,sport_image,player_amount,marker):
+    def __init__(self, pemain_id, pemain_name, pemain_url_image, booking_location,sport,sport_image,player_amount,marker,time):
         self.pemain_id = pemain_id
         self.pemain_name = pemain_name
         self.pemain_url_image = pemain_url_image
@@ -38,6 +40,7 @@ class AcceptedBooking(db.Model):
         self.sport_image = sport_image
         self.player_amount = player_amount
         self.marker = marker
+        self.time = time
 
     def __repr__(self): #initiate table model
         return '<AcceptedBooking %r>' % self.id 
