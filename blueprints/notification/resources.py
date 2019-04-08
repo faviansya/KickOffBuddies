@@ -23,6 +23,9 @@ class NotificationResources(Resource):
         marshal_notificaiton = marshal(qry, Notification.response_field)
         
         return {'status' : 'Success', 'data' : marshal_notificaiton}, 200, {'Content_type' : 'application/json'}
+    def options(self,id=None):
+        return {},200
+
 
 api.add_resource(NotificationResources, '', '/<int:id>')
 

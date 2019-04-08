@@ -177,5 +177,7 @@ class PemainResources(Resource):
             return {'status': 'Success', 'data': marshal(pemain, Pemain.response_field)}, 200, {'Content_type': 'application/json'}
         return {'status': 'Password Invalid'}, 400, {'Content_type': 'application/json'}
 
+    def options(self,pemain_endpoint=None):
+        return {},200
 
 api.add_resource(PemainResources, '', '/<pemain_endpoint>')

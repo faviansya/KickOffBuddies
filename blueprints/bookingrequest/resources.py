@@ -119,6 +119,9 @@ class BookingRequestResources(Resource):
         db.session.commit()
 
         return {'status' : 'Success','data' : marshal(qry, BookingRequest.response_field)}, 200, {'Content_type' : 'application/json'}
+    
+    def options(self,request_endpoint=None):
+        return {},200
 
 class MyBookingResources(Resource):
     @jwt_required
@@ -138,6 +141,9 @@ class MyBookingResources(Resource):
             rows.append(marshal(row, BookingRequest.response_field))
         return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
 
+    def options(self):
+        return {},200
+
 class SearchBookingResources(Resource):
     @jwt_required
     def get(self):
@@ -152,6 +158,10 @@ class SearchBookingResources(Resource):
             rows.append(marshal(row, BookingRequest.response_field))
         return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
 
+    def options(self):
+        return {},200
+
+
 class CategoryBookingResources(Resource):
     @jwt_required
     def get(self):
@@ -165,6 +175,10 @@ class CategoryBookingResources(Resource):
         for row in qry:
             rows.append(marshal(row, BookingRequest.response_field))
         return {'status':'success', 'data':rows}, 200, {'Content_type' : 'application/json'}
+
+    def options(self):
+        return {},200
+
 
 api.add_resource(BookingRequestResources, '', '/<request_endpoint>')
 api.add_resource(MyBookingResources, '/mybooking')

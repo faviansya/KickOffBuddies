@@ -243,4 +243,8 @@ class PlayerListResources(Resource):
         
         return {"len":pemain_now,"lensisa":pemain_sisa, "Len Now":len(marshal(qry, PlayerList.response_field)),'status' : 'Success',"a":rows}, 200, {'Content_type' : 'application/json'}
 
+    def options(self,playerlist_endpoint=None):
+        return {},200
+
+
 api.add_resource(PlayerListResources, '', '/<playerlist_endpoint>')

@@ -60,5 +60,8 @@ class ChatPlayerListResources(Resource):
     def patch(self):
         return 'Not yet implemented', 501
 
+    def options(self,id=None):
+        return {},200
+
 api.add_resource(ChatPlayerListResources, '', '/<int:id>')
 

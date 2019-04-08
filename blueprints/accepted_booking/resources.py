@@ -43,5 +43,8 @@ class AcceptedBookingResources(Resource):
     def patch(self):
         return 'Not yet implemented', 501
 
+    def options(self,acceptlist_endpoint=None):
+        return {},200
+
 api.add_resource(AcceptedBookingResources, '', '/<acceptlist_endpoint>')
 
