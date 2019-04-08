@@ -92,7 +92,7 @@ class BookingRequestResources(Resource):
         args = parser.parse_args()
         duit = 0
         if(args['sport'] == "Basketball"):
-            duit = 100000
+            duit = 60000
             image = "http://indodjaja.com/KickOffBuddies/SportCategory/Basket.png"
         if(args['sport'] == "Badminton"):
             duit = 40000
@@ -101,7 +101,7 @@ class BookingRequestResources(Resource):
             duit = 110000
             image = "https://www.brisbanecentralfutsal.com/wp-content/uploads/2018/07/Futsal-Coaching-Player-Skills.png"
         if(args['sport'] == "Tennis"):
-            duit = 75000
+            duit = 70000
             image = "http://www.pngmart.com/files/8/Tennis-PNG-Free-Image.png"
 
         booking_request = BookingRequest(None, jwtclaim['id'], args['sport'], args['player'], args['time'], args['location'], args['compound'], args['vicinity'],'wait',image, 1,duit)
