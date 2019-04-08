@@ -206,18 +206,18 @@ class PlayerListResources(Resource):
                     start = 0
                     tambahan = hasil[1].split(":")
                     if(int(tambahan[0]) < 10):
-                        start = hasil[0]+"T0"+hasil[1] + "-07:00"
+                        start = hasil[0]+"T0"+hasil[1] + "+07:00"
                     else:
-                        start = hasil[0]+"T"+hasil[1] + "-07:00"
+                        start = hasil[0]+"T"+hasil[1] + "+07:00"
 
 
                     stop = 0
                     tambahan = hasil[1].split(":")
                     end = int(tambahan[0]) + 1
                     if(end < 10):
-                        stop = hasil[0]+"T0"+str(end) + ":00:00-07:00"
+                        stop = hasil[0]+"T0"+str(end) + ":00:00+07:00"
                     else:
-                        stop = hasil[0]+"T"+str(end) + ":00:00-07:00"
+                        stop = hasil[0]+"T"+str(end) + ":00:00+07:00"
 
                     calendars = AppendCalendar.Calendar(marshal_getplayer["email"],marshal_booking["location"],marshal_booking["sport"],start,stop,"User")
                     calendars.setCalendar()

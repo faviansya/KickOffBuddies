@@ -55,7 +55,7 @@ class Calendar():
         acara = {
             'summary': self.SPORT,
             'location': self.LOCATION,
-            'description': 'KickOffBuddies Remainder, Sesungguhnya Olahraga Menyehatkanmu',
+            'description': 'KickOffBuddies Reminder, verily sport makes you healthy and happy ',
             'start': {
                 # 'dateTime': '2019-04-07T09:00:00-07:00',
                 'dateTime': self.TIMESTART,
