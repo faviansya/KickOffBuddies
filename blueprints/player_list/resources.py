@@ -165,12 +165,12 @@ class PlayerListResources(Resource):
                 counter +=1
                 for i in getID:
                     if counter == 1:
-                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,1)
+                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,1,marshal_booking["time"])
                         db.session.add(inputToAcceptedBooking)
                         db.session.commit()
                         rows.append(data_marshal)
                     else:
-                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,0)
+                        inputToAcceptedBooking= AcceptedBooking(i["pemain_id"],data_marshal["pemain_name"],data_marshal["pemain_image"],marshal_booking["location"],marshal_booking["sport"],marshal_booking["url_image"],pemain_now,0,marshal_booking["time"])
                         db.session.add(inputToAcceptedBooking)
                         db.session.commit()
                         rows.append(data_marshal)
