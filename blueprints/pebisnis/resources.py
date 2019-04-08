@@ -148,12 +148,19 @@ class PebisnisResource(Resource):
     def patch(self):
         return 'Not yet implemented', 501
 
+    def options(self,id=None):
+        return {},200
+
+
 class PebisnisSelfResource(Resource): 
     @jwt_required  
     def get(self):
         id = get_jwt_claims()['id']
         qry = Pebisnis.query.get(id) #select * from where id = id
         return {"status": "200 OK", "message": "Your user profile is on display", "data": marshal(qry, Pebisnis.response_field)}, 200, {'Content-Type': 'application/json'}   
+
+    def options(self):
+        return {},200
 
 api.add_resource(PebisnisResource, '', '/<int:id>')
 api.add_resource(PebisnisSelfResource, '', '/myprofile')

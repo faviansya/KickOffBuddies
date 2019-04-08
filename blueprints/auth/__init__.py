@@ -23,6 +23,9 @@ class CreateTokenResources(Resource):
             return {'status' : 'UNAUTHORIZED', 'message' : 'Invalid key'}, 401, {'Content_type' : 'application/json'}
         return {'token' : token}, 200, {'Content_type' : 'application/json'}
 
+    def options(self):
+        return {},200
+
 api.add_resource(CreateTokenResources, '')
 
 class CreateTokenResourcesPebisnis(Resource):
@@ -39,5 +42,8 @@ class CreateTokenResourcesPebisnis(Resource):
         else:
             return {'status' : 'UNAUTHORIZED', 'message' : 'Invalid key'}, 401, {'Content_type' : 'application/json'}
         return {'token' : token}, 200, {'Content_type' : 'application/json'}
+    
+    def options(self):
+        return {},200
 
 api.add_resource(CreateTokenResourcesPebisnis, '/pebisnis')
